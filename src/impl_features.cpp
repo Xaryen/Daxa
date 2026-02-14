@@ -209,7 +209,7 @@ namespace daxa
     };
 
     constexpr static std::array REQUIRED_FEATURES = std::array{
-        RequiredFeature{offsetof(PhysicalDeviceFeaturesStruct, physical_device_features_2.features.shaderStorageImageMultisample), DAXA_MISSING_REQUIRED_VK_FEATURE_SHADER_STORAGE_IMAGE_MULTISAMPLE},
+        // RequiredFeature{offsetof(PhysicalDeviceFeaturesStruct, physical_device_features_2.features.shaderStorageImageMultisample), DAXA_MISSING_REQUIRED_VK_FEATURE_SHADER_STORAGE_IMAGE_MULTISAMPLE},
         RequiredFeature{offsetof(PhysicalDeviceFeaturesStruct, physical_device_features_2.features.imageCubeArray), DAXA_MISSING_REQUIRED_VK_FEATURE_IMAGE_CUBE_ARRAY},
         RequiredFeature{offsetof(PhysicalDeviceFeaturesStruct, physical_device_features_2.features.independentBlend), DAXA_MISSING_REQUIRED_VK_FEATURE_INDEPENDENT_BLEND},
         RequiredFeature{offsetof(PhysicalDeviceFeaturesStruct, physical_device_features_2.features.tessellationShader), DAXA_MISSING_REQUIRED_VK_FEATURE_TESSELLATION_SHADER},
