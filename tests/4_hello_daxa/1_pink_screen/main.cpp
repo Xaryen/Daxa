@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #if defined(_WIN32)
 #define GLFW_EXPOSE_NATIVE_WIN32
+#define GLFW_NATIVE_INCLUDE_NONE
+using HWND = void *;
 #elif defined(__linux__)
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_WAYLAND
@@ -12,7 +14,7 @@
 auto get_native_window_info(GLFWwindow * glfw_window_ptr, daxa::u32 width, daxa::u32 height) -> daxa::NativeWindowInfo
 {
 #if defined(_WIN32)
-    return glfwGetWin32Window(glfw_window_ptr);
+    return daxa::NativeWindowInfoWin32{.hwnd = glfwGetWin32Window(glfw_window_ptr)};
 #elif defined(__linux__)
     switch (glfwGetPlatform())
     {
@@ -128,16 +130,10 @@ auto main() -> int
     // and native platform. Optionally, the user can provide a debug name, surface
     // format type selector, the additional image uses (image uses will be explained later),
     // and present mode (this controls sync)
+    daxa::NativeWindowInfo native_window_info = get_native_window_info(glfw_window_ptr, window_info.width, window_info.height);
     daxa::Swapchain swapchain = device.create_swapchain({
-        .native_window_info = get_native_window_info(glfw_window_ptr, window_info.width, window_info.height),
-        .surface_format_selector = [](daxa::Format format, daxa::ColorSpace colorspace)
-        {
-            switch (format)
-            {
-            case daxa::Format::R8G8B8A8_UINT: return 100;
-            default: return daxa::default_format_score(format, colorspace);
-            }
-        },
+        .native_window_info = native_window_info,
+        .surface_format = device.choose_swapchain_surface_format({.native_window_info = native_window_info}),
         .present_mode = daxa::PresentMode::FIFO,
         .image_usage = daxa::ImageUsageFlagBits::TRANSFER_DST,
         .name = "my swapchain",
@@ -186,9 +182,9 @@ auto main() -> int
         });
 
         recorder.clear_image({
+            .image = swapchain_image,
+            .slice = swapchain_image_full_slice,
             .clear_value = std::array<daxa::f32, 4>{1.0f, 0.0f, 1.0f, 1.0f},
-            .dst_image = swapchain_image,
-            .dst_slice = swapchain_image_full_slice,
         });
 
         recorder.pipeline_image_barrier({
