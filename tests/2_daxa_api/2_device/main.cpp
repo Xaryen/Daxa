@@ -160,6 +160,6 @@ auto main() -> int
     tests::sro_creation(instance);
     tests::sro_aliased_suballocation(instance);
     tests::sro_aliased_suballocation_host_memory(instance);
-    tests::acceleration_structure_creation(instance);
+    // tests::acceleration_structure_creation(instance); // intel-compat: ray tracing disabled
     std::cout << "completed all tests successfully!" << std::endl;
 }
