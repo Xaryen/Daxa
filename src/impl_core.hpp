@@ -178,8 +178,11 @@ deferrer<F> operator*(defer_dummy, F f) { return {f}; }
 #define defer auto DEFER(__LINE__) = defer_dummy{} * [&]()
 #endif // defer
 
-#if defined(_MSC_VER)
-#define _DAXA_DEBUG_BREAK __debugbreak();
+// Break only in debug builds and only when a debugger is attached. Without a debugger,
+// __debugbreak() raises an unhandled EXCEPTION_BREAKPOINT that kills the host process
+// instead of letting the daxa_Result propagate to the caller.
+#if defined(_MSC_VER) && !defined(NDEBUG)
+#define _DAXA_DEBUG_BREAK if (IsDebuggerPresent() != 0) { __debugbreak(); }
 #else
 #define _DAXA_DEBUG_BREAK
 #endif
