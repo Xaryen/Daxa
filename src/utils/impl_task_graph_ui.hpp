@@ -7,8 +7,8 @@
 #include "impl_resource_viewer.hpp"
 #include <set>
 #include <optional>
-#include <filesystem>
 
+#include "../impl_core.hpp"
 
 #define TASK_GRAPH_RESOURCE_VIEWER_ONLINE_COMPILE_SHADERS 0 // FOR DEVELOPMENT ONLY
 
@@ -60,7 +60,7 @@ namespace daxa
         std::vector<std::vector<u32>> task_resource_to_attachment_lookup = {};
         std::set<std::string> open_task_detail_windows = {};
         std::set<std::string> open_resource_detail_windows = {};
-        std::optional<std::filesystem::path> buffer_layout_cache_folder = {};
+        std::optional<std::string> buffer_layout_cache_folder = {};
         bool show_batch_borders = true;
         bool show_transfer_tasks = true;
         bool show_async_queues = true;

@@ -2,13 +2,15 @@ find_package(Vulkan REQUIRED)
 
 include(FetchContent)
 
-FetchContent_Declare(
-    vma
-    GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-    GIT_TAG        v3.1.0
-    SYSTEM
-)
-FetchContent_MakeAvailable(vma)
+if (NOT TARGET GPUOpen::VulkanMemoryAllocator)
+    FetchContent_Declare(
+        vma
+        GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+        GIT_TAG        v3.1.0
+        SYSTEM
+    )
+    FetchContent_MakeAvailable(vma)
+endif()
 
 if (DAXA_ENABLE_UTILS_PIPELINE_MANAGER_GLSLANG AND NOT TARGET glslang::glslang)
     option(ENABLE_OPT "" OFF)
@@ -38,7 +40,7 @@ if (DAXA_ENABLE_TESTS AND NOT TARGET glfw)
     FetchContent_MakeAvailable(glfw)
 endif()
 
-if (DAXA_ENABLE_UTILS_IMGUI AND NOT TARGET imgui::imgui AND NOT TARGET implot::implot)
+if (DAXA_ENABLE_UTILS_IMGUI AND NOT TARGET imgui::imgui)
     FetchContent_Declare(
         imgui
         GIT_REPOSITORY https://github.com/ocornut/imgui
@@ -56,20 +58,25 @@ if (DAXA_ENABLE_UTILS_IMGUI AND NOT TARGET imgui::imgui AND NOT TARGET implot::i
             ${imgui_SOURCE_DIR}/imgui_widgets.cpp
             ${imgui_SOURCE_DIR}/imgui_tables.cpp)
 
-        target_include_directories(lib_imgui PUBLIC
+        target_include_directories(lib_imgui SYSTEM PUBLIC
             ${imgui_SOURCE_DIR}
             ${imgui_SOURCE_DIR}/backends
             ${Vulkan_INCLUDE_DIRS})
+        if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"))
+            target_compile_options(lib_imgui PRIVATE -Wno-nontrivial-memcall)
+        endif()
 
         if(TARGET glfw)
             target_sources(lib_imgui PRIVATE ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp)
             target_link_libraries(lib_imgui PRIVATE glfw)
-            target_include_directories(lib_imgui PUBLIC ${glfw_SOURCE_DIR}/include)
+            target_include_directories(lib_imgui SYSTEM PUBLIC ${glfw_SOURCE_DIR}/include)
         endif()
 
         add_library(imgui::imgui ALIAS lib_imgui)
     endif()
+endif()
 
+if (DAXA_ENABLE_UTILS_IMGUI AND NOT TARGET implot::implot)
     FetchContent_Declare(
         implot
         GIT_REPOSITORY https://github.com/epezent/implot
@@ -86,7 +93,10 @@ if (DAXA_ENABLE_UTILS_IMGUI AND NOT TARGET imgui::imgui AND NOT TARGET implot::i
             ${implot_SOURCE_DIR}/implot_items.cpp
             ${implot_SOURCE_DIR}/implot_demo.cpp)
 
-        target_include_directories(lib_implot PUBLIC ${implot_SOURCE_DIR})
+        target_include_directories(lib_implot SYSTEM PUBLIC ${implot_SOURCE_DIR})
+        if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"))
+            target_compile_options(lib_implot PRIVATE -Wno-nontrivial-memcall)
+        endif()
         target_link_libraries(lib_implot PRIVATE imgui::imgui)
 
         add_library(implot::implot ALIAS lib_implot)

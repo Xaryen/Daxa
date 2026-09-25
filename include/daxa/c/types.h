@@ -252,6 +252,37 @@ daxa_timeline_query_pool_dec_refcnt(daxa_TimelineQueryPool timeline_query_pool);
 
 typedef enum
 {
+    DAXA_FORMAT_FLAG_NONE       = 0,
+    DAXA_FORMAT_FLAG_DEPTH      = 1 << 0,
+    DAXA_FORMAT_FLAG_STENCIL    = 1 << 1,
+    DAXA_FORMAT_FLAG_COMPRESSED = 1 << 2,
+    DAXA_FORMAT_FLAG_SIGNED     = 1 << 3,  /* SNORM, SINT, SFLOAT */
+    DAXA_FORMAT_FLAG_FLOAT      = 1 << 4,  /* SFLOAT */
+    DAXA_FORMAT_FLAG_NORM       = 1 << 5,  /* UNORM, SNORM */
+    DAXA_FORMAT_FLAG_SRGB       = 1 << 6,
+    DAXA_FORMAT_FLAG_SCALED     = 1 << 7,  /* USCALED, SSCALED */
+    DAXA_FORMAT_FLAG_MAX_ENUM   = 0x7fffffff,
+} daxa_FormatFlags;
+
+typedef struct
+{
+    uint8_t channel_count;
+    uint8_t channel_bits;  /* bits per channel (0 if channels differ or block-compressed) */
+    uint8_t element_bits;  /* total bits per texel (0 if block-compressed) */
+    daxa_FormatFlags flags;
+} daxa_FormatInfo;
+
+DAXA_EXPORT daxa_FormatInfo
+daxa_format_info(VkFormat format);
+
+DAXA_EXPORT daxa_Bool8 daxa_is_format_depth(VkFormat format);
+DAXA_EXPORT daxa_Bool8 daxa_is_format_stencil(VkFormat format);
+DAXA_EXPORT daxa_Bool8 daxa_is_format_depth_stencil(VkFormat format);
+DAXA_EXPORT daxa_Bool8 daxa_is_format_float(VkFormat format);
+DAXA_EXPORT daxa_Bool8 daxa_is_format_int(VkFormat format);
+
+typedef enum
+{
     DAXA_QUEUE_TYPE_MAIN,
     DAXA_QUEUE_TYPE_COMPUTE,
     DAXA_QUEUE_TYPE_TRANSFER,

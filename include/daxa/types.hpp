@@ -1193,7 +1193,38 @@ namespace daxa
         MAX_ENUM = 0x7fffffff,
     };
 
+    enum struct FormatFlags : u32
+    {
+        NONE       = 0,
+        DEPTH      = 1 << 0,
+        STENCIL    = 1 << 1,
+        COMPRESSED = 1 << 2,
+        SIGNED     = 1 << 3,  // SNORM, SINT, SFLOAT
+        FLOAT      = 1 << 4,  // SFLOAT
+        NORM       = 1 << 5,  // UNORM, SNORM
+        SRGB       = 1 << 6,
+        SCALED     = 1 << 7,  // USCALED, SSCALED
+    };
+    [[nodiscard]] inline constexpr auto operator|(FormatFlags a, FormatFlags b) -> FormatFlags { return static_cast<FormatFlags>(static_cast<u32>(a) | static_cast<u32>(b)); }
+    [[nodiscard]] inline constexpr auto operator&(FormatFlags a, FormatFlags b) -> FormatFlags { return static_cast<FormatFlags>(static_cast<u32>(a) & static_cast<u32>(b)); }
+    inline constexpr auto operator|=(FormatFlags & a, FormatFlags b) -> FormatFlags & { a = a | b; return a; }
+
+    struct FormatInfo
+    {
+        u8 channel_count = {};
+        u8 channel_bits = {};  // bits per channel (0 if channels differ or block-compressed)
+        u8 element_bits = {};  // total bits per texel (0 if block-compressed)
+        FormatFlags flags = {};
+    };
+
     [[nodiscard]] DAXA_EXPORT_CXX auto to_string(Format format) -> std::string_view;
+
+    [[nodiscard]] DAXA_EXPORT_CXX auto format_info(Format format) -> FormatInfo;
+    [[nodiscard]] DAXA_EXPORT_CXX auto is_format_depth(Format format) -> bool;
+    [[nodiscard]] DAXA_EXPORT_CXX auto is_format_stencil(Format format) -> bool;
+    [[nodiscard]] DAXA_EXPORT_CXX auto is_format_depth_stencil(Format format) -> bool;
+    [[nodiscard]] DAXA_EXPORT_CXX auto is_format_float(Format format) -> bool;
+    [[nodiscard]] DAXA_EXPORT_CXX auto is_format_int(Format format) -> bool;
 
     template <typename Properties>
     struct Flags final

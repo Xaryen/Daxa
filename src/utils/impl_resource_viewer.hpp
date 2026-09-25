@@ -1,6 +1,7 @@
 #pragma once
 #if DAXA_BUILT_WITH_UTILS_TASK_GRAPH && DAXA_BUILT_WITH_UTILS_IMGUI
 #include <daxa/utils/task_graph_types.hpp>
+#include <unordered_map>
 
 #include "impl_resource_viewer.slang"
 

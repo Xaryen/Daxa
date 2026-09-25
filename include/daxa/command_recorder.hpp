@@ -128,8 +128,8 @@ namespace daxa
         uint32_t depth = 1;
         uint32_t raygen_shader_binding_table_offset = {};
         uint32_t miss_shader_binding_table_offset = {};
-        uint32_t miss_shader_binding_table_stride = {};
         uint32_t hit_shader_binding_table_offset = {};
+        uint32_t callable_shader_binding_table_offset = {};
         RayTracingShaderBindingTable shader_binding_table;
     };
 
@@ -138,8 +138,8 @@ namespace daxa
         DeviceAddress indirect_device_address = {};
         uint32_t raygen_shader_binding_table_offset = {};
         uint32_t miss_shader_binding_table_offset = {};
-        uint32_t miss_shader_binding_table_stride = {};
         uint32_t hit_shader_binding_table_offset = {};
+        uint32_t callable_shader_binding_table_offset = {};
         RayTracingShaderBindingTable shader_binding_table;
     };
 
@@ -403,6 +403,8 @@ namespace daxa
 
         void begin_label(CommandLabelInfo const & info);
         void end_label();
+
+        [[nodiscard]] auto get() const -> daxa_CommandRecorder { return internal; }
 
         [[nodiscard]] auto complete_current_commands() -> ExecutableCommandList;
 

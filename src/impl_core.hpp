@@ -81,10 +81,6 @@ static inline constexpr u32 GPU_TABLE_SET_BINDING = 0;
 static inline constexpr u32 CONSTANT_BUFFER_BINDING_SET = 1;
 static inline constexpr u32 CONSTANT_BUFFER_BINDING_COUNT = 8;
 
-auto is_depth_format(Format format) -> bool;
-
-auto is_stencil_format(Format format) -> bool;
-
 auto infer_aspect_from_format(Format format) -> VkImageAspectFlags;
 
 auto make_subresource_range(ImageMipArraySlice const & slice, VkImageAspectFlags aspect) -> VkImageSubresourceRange;
